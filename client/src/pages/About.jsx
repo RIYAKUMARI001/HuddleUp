@@ -20,7 +20,7 @@ const About = () => {
       icon: Heart,
       title: "Community First, Always",
       desc: "No algorithm deciding what you see. No ads interrupting your flow. Just pure, unfiltered sports passion from people who actually care.",
-      color: "#22c55e",       // emerald
+      color: "#22c55e",
       colorLight: "rgba(34, 197, 94, 0.15)",
       colorGlow: "rgba(34, 197, 94, 0.35)",
     },
@@ -28,34 +28,47 @@ const About = () => {
       icon: Zap,
       title: "Built for Speed",
       desc: "Upload highlights in seconds. Stream without buffering. React in real-time. Because when the game is on, every second counts.",
-      color: "#00E5FF",       // cyan accent
+      color: "#00E5FF",
       colorLight: "rgba(0, 229, 255, 0.15)",
       colorGlow: "rgba(0, 229, 255, 0.35)",
     },
     {
       icon: Shield,
       title: "Safe Space, Real Talk",
-      description: "Rivalries are fun. Toxicity isn't. We keep it competitive but respectful, so everyone can bring their A-game without the BS."
+      desc: "Rivalries are fun. Toxicity isn't. We keep it competitive but respectful, so everyone can bring their A-game without the BS.",
+      color: "#a78bfa",
+      colorLight: "rgba(167, 139, 250, 0.15)",
+      colorGlow: "rgba(167, 139, 250, 0.35)",
     },
     {
       icon: Users,
       title: "Collaborative Growth",
-      description: "Open-source spirit: built by fans, for fans. Contributions and feedback shape our roadmap."
+      desc: "Open-source spirit: built by fans, for fans. Contributions and feedback shape our roadmap.",
+      color: "#f97316",
+      colorLight: "rgba(249, 115, 22, 0.15)",
+      colorGlow: "rgba(249, 115, 22, 0.35)",
     },
     {
       icon: Globe,
       title: "Global Accessibility",
-      description: "Accessible from anywhere, on any device. Multilingual support and inclusive design."
+      desc: "Accessible from anywhere, on any device. Multilingual support and inclusive design.",
+      color: "#38bdf8",
+      colorLight: "rgba(56, 189, 248, 0.15)",
+      colorGlow: "rgba(56, 189, 248, 0.35)",
     },
     {
       icon: TrendingUp,
       title: "Continuous Innovation",
-      description: "We ship new features and improvements every month, driven by community needs."
+      desc: "We ship new features and improvements every month, driven by community needs.",
+      color: "#facc15",
+      colorLight: "rgba(250, 204, 21, 0.15)",
+      colorGlow: "rgba(250, 204, 21, 0.35)",
     },
   ];
 
   return (
     <PageWrapper>
+      <PageMeta title="About" description="HuddleUp is where sports fans share moments, debate the play, and connect. Community-first, built for speed." />
       <div
         className="min-h-screen relative"
         style={{
@@ -204,27 +217,64 @@ const About = () => {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: index * 0.11 }}
-                    whileHover={{ y: -8, scale: 1.03, boxShadow: "0 8px 32px 0 rgba(56,189,248,0.10)" }}
-                    className="p-8 group cursor-pointer shadow-sm hover:shadow-lg transition-all duration-200"
-                    style={{
-                      background: 'linear-gradient(120deg, var(--bg-surface) 80%, #f0f9ff 100%)',
-                      borderRadius: '12px',
-                      border: '1px solid var(--border-subtle)',
+                    transition={{ delay: index * 0.12, duration: 0.35, ease: 'easeOut' }}
+                    whileHover={{
+                      y: -8,
+                      scale: 1.03,
+                      transition: { type: 'spring', stiffness: 260, damping: 20 },
                     }}
+                    className="group relative overflow-hidden p-[1px] rounded-2xl"
                   >
-                    <IconComponent 
-                      className="w-12 h-12 mb-4 group-hover:scale-110 transition-transform duration-200" 
-                      style={{ color: 'var(--accent)' }} 
-                      strokeWidth={1.5}
+                    {/* colorful border that lights up on hover */}
+                    <div
+                      className="absolute inset-0 rounded-2xl opacity-60 group-hover:opacity-100 transition-opacity duration-300"
+                      style={{
+                        background:
+                          'conic-gradient(from 160deg at 50% 50%, #4f46e5, #ec4899, #f97316, #22c55e, #0ea5e9, #4f46e5)',
+                        filter: 'blur(3px)',
+                      }}
                     />
-                    <h3 className="text-xl font-bold mb-3" style={{ color: 'var(--text-main)' }}>
-                      {principle.title}
-                    </h3>
-                    <p style={{ color: 'var(--text-sub)', lineHeight: '1.7' }}>
-                      {principle.description}
-                    </p>
+
+                    {/* card surface */}
+                    <div
+                      className="relative h-full w-full rounded-[1rem] p-6"
+                      style={{
+                        background: 'var(--bg-surface)',
+                        borderRadius: '1rem',
+                        border: '1px solid var(--border-subtle)',
+                        backdropFilter: 'blur(12px)',
+                        transition: 'background 0.25s ease-out, border-color 0.25s ease-out',
+                      }}
+                    >
+                      {/* inner subtle tint on hover */}
+                      <div
+                        className="pointer-events-none absolute inset-0 rounded-[1rem] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        style={{
+                          background:
+                            'radial-gradient(circle at 0% 0%, rgba(79,70,229,0.18), transparent 55%), radial-gradient(circle at 100% 100%, rgba(236,72,153,0.18), transparent 55%)',
+                        }}
+                      />
+
+                      {/* content */}
+                      <div className="relative">
+                        <IconComponent
+                          className="w-10 h-10 mb-4"
+                          style={{ color: 'var(--accent)' }}
+                          strokeWidth={1.5}
+                        />
+                        <h3
+                          className="text-xl font-bold mb-3"
+                          style={{ color: 'var(--text-main)' }}
+                        >
+                          {principle.title}
+                        </h3>
+                        <p style={{ color: 'var(--text-sub)', lineHeight: '1.7' }}>
+                          {principle.desc}
+                        </p>
+                      </div>
+                    </div>
                   </motion.div>
+
                 );
               })}
             </div>
