@@ -42,6 +42,14 @@ const Explore = () => {
     if (location.pathname === "/explore") fetchVideos();
   }, [location.pathname]);
 
+  // Handle search parameter from URL (e.g., from hashtag links)
+  useEffect(() => {
+    const query = searchParams.get('search');
+    if (query) {
+      setSearchTerm(query);
+    }
+  }, [searchParams]);
+
   // Open video when sharing link
   const shareVideoId = searchParams.get('video');
   useEffect(() => {
@@ -86,21 +94,21 @@ const Explore = () => {
   // Filtered videos based on search and category
   const getFilteredVideos = () => {
     let filtered = videos;
-    
+
     // Apply category filter
     if (activeFilter !== 'ALL') {
       filtered = filtered.filter(v => v.category === activeFilter);
     }
-    
+
     // Apply search filter
     if (searchTerm) {
-      filtered = filtered.filter(v => 
+      filtered = filtered.filter(v =>
         v.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         v.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         v.uploadedBy?.username?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-    
+
     return filtered;
   };
 
@@ -142,7 +150,7 @@ const Explore = () => {
   // Editorial Section Component
   const EditorialSection = ({ title, icon: Icon, videos, accent = 'var(--accent)' }) => {
     if (!videos || videos.length === 0) return null;
-    
+
     return (
       <section className="mb-16">
         <div className="flex items-center justify-between mb-6">
@@ -256,315 +264,315 @@ const Explore = () => {
     <PageWrapper>
       <PageMeta title={pageTitle} description={pageDescription} />
       <div className="min-h-screen" style={{ background: 'var(--bg-primary)' }}>
-      
-      {/* Hero Header */}
-      <motion.section 
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="px-6 md:px-12 pt-12 pb-8"
-      >
-        <div className="max-w-7xl mx-auto">
-          {/* Discover Content Button */}
-          <div className="flex justify-end mb-8">
-            <button
-              className="px-4 py-2 rounded-full flex items-center gap-2 font-medium text-sm"
+
+        {/* Hero Header */}
+        <motion.section
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="px-6 md:px-12 pt-12 pb-8"
+        >
+          <div className="max-w-7xl mx-auto">
+            {/* Discover Content Button */}
+            <div className="flex justify-end mb-8">
+              <button
+                className="px-4 py-2 rounded-full flex items-center gap-2 font-medium text-sm"
+                style={{
+                  background: 'var(--turf-green)',
+                  color: 'var(--bg-primary)',
+                  border: '2px solid var(--turf-green)'
+                }}
+              >
+                <span>●</span> Discover Content
+              </button>
+            </div>
+
+            <h1 className="text-4xl md:text-6xl font-black mb-4" style={{ color: 'var(--ice-white)' }}>
+              Explore{' '}
+              <span style={{
+                background: 'linear-gradient(135deg, #10b981, #06b6d4)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text'
+              }}>
+                Sports Universe
+              </span>
+            </h1>
+            <p className="text-lg max-w-3xl mb-8" style={{ color: 'var(--text-sub)' }}>
+              Immerse yourself in world-class sports stories, expert analysis, and exclusive highlights from across the globe.
+            </p>
+
+            {/* Search and Filters Card */}
+            <div className="rounded-2xl p-6 md:p-8"
               style={{
-                background: 'var(--turf-green)',
-                color: 'var(--bg-primary)',
-                border: '2px solid var(--turf-green)'
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-subtle)'
               }}
             >
-              <span>●</span> Discover Content
-            </button>
-          </div>
+              {/* Search Bar */}
+              <div className="mb-6">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5"
+                    style={{ color: 'var(--text-sub)' }} />
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search by title, athlete, or sport..."
+                    className="w-full pl-12 pr-4 py-3 rounded-lg outline-none transition-all"
+                    style={{
+                      background: 'var(--bg-primary)',
+                      border: '2px solid var(--border-subtle)',
+                      color: 'var(--text-main)',
+                      fontSize: 'var(--text-base)'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = 'var(--accent)'}
+                    onBlur={(e) => e.target.style.borderColor = 'var(--border-subtle)'}
+                  />
+                </div>
+              </div>
 
-          <h1 className="text-4xl md:text-6xl font-black mb-4" style={{ color: 'var(--ice-white)' }}>
-            Explore{' '}
-            <span style={{
-              background: 'linear-gradient(135deg, #10b981, #06b6d4)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
-            }}>
-              Sports Universe
-            </span>
-          </h1>
-          <p className="text-lg max-w-3xl mb-8" style={{ color: 'var(--text-sub)' }}>
-            Immerse yourself in world-class sports stories, expert analysis, and exclusive highlights from across the globe.
-          </p>
+              {/* Sort options: Newest (default), Most viewed, Most liked */}
+              <div className="flex flex-wrap items-center gap-2 mb-4">
+                <span className="text-sm font-medium mr-1" style={{ color: 'var(--text-sub)' }}>Sort by:</span>
+                {[
+                  { key: 'newest', label: 'Newest', icon: Clock },
+                  { key: 'views', label: 'Most viewed', icon: Eye },
+                  { key: 'likes', label: 'Most liked', icon: Heart },
+                ].map((opt) => {
+                  const isActive = sortBy === opt.key;
+                  const Icon = opt.icon;
+                  return (
+                    <button
+                      key={opt.key}
+                      onClick={() => setSortBy(opt.key)}
+                      className="px-4 py-2 rounded-full font-medium text-sm flex items-center gap-2 transition-all"
+                      style={{
+                        background: isActive ? 'var(--accent)' : 'var(--bg-primary)',
+                        color: isActive ? 'var(--bg-primary)' : 'var(--text-sub)',
+                        border: `2px solid ${isActive ? 'var(--accent)' : 'var(--border-subtle)'}`,
+                        transform: isActive ? 'scale(1.02)' : 'scale(1)',
+                      }}
+                    >
+                      <Icon className="w-4 h-4" />
+                      <span>{opt.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
 
-          {/* Search and Filters Card */}
-          <div className="rounded-2xl p-6 md:p-8"
-            style={{
-              background: 'var(--bg-surface)',
-              border: '1px solid var(--border-subtle)'
-            }}
-          >
-            {/* Search Bar */}
-            <div className="mb-6">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5" 
-                  style={{ color: 'var(--text-sub)' }} />
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search by title, athlete, or sport..."
-                  className="w-full pl-12 pr-4 py-3 rounded-lg outline-none transition-all"
-                  style={{
-                    background: 'var(--bg-primary)',
-                    border: '2px solid var(--border-subtle)',
-                    color: 'var(--text-main)',
-                    fontSize: 'var(--text-base)'
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = 'var(--accent)'}
-                  onBlur={(e) => e.target.style.borderColor = 'var(--border-subtle)'}
-                />
+              {/* Category Filter Pills */}
+              <div className="flex flex-wrap gap-3">
+                {[
+                  { key: 'ALL', label: 'All', icon: '⚡' },
+                  { key: 'UNHEARD STORIES', label: 'Unheard Stories', icon: '🎙️' },
+                  { key: 'MATCH ANALYSIS', label: 'Match Analysis', icon: '📊' },
+                  { key: 'SPORTS AROUND THE GLOBE', label: 'Sports Around The Globe', icon: '🌍' }
+                ].map((filter) => {
+                  const count = getCategoryCount(filter.key);
+                  const isActive = activeFilter === filter.key;
+
+                  return (
+                    <button
+                      key={filter.key}
+                      onClick={() => setActiveFilter(filter.key)}
+                      className="px-4 py-2 rounded-full font-medium text-sm flex items-center gap-2 transition-all"
+                      style={{
+                        background: isActive ? 'var(--turf-green)' : 'var(--bg-primary)',
+                        color: isActive ? 'var(--bg-primary)' : 'var(--text-sub)',
+                        border: `2px solid ${isActive ? 'var(--turf-green)' : 'var(--border-subtle)'}`,
+                        transform: isActive ? 'scale(1.05)' : 'scale(1)'
+                      }}
+                    >
+                      <span>{filter.icon}</span>
+                      <span>{filter.label}</span>
+                      <span className="px-1.5 py-0.5 rounded-full text-xs font-bold"
+                        style={{
+                          background: isActive ? 'rgba(0,0,0,0.2)' : 'var(--border-subtle)',
+                          color: isActive ? 'var(--bg-primary)' : 'var(--text-main)'
+                        }}>
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
-
-            {/* Sort options: Newest (default), Most viewed, Most liked */}
-            <div className="flex flex-wrap items-center gap-2 mb-4">
-              <span className="text-sm font-medium mr-1" style={{ color: 'var(--text-sub)' }}>Sort by:</span>
-              {[
-                { key: 'newest', label: 'Newest', icon: Clock },
-                { key: 'views', label: 'Most viewed', icon: Eye },
-                { key: 'likes', label: 'Most liked', icon: Heart },
-              ].map((opt) => {
-                const isActive = sortBy === opt.key;
-                const Icon = opt.icon;
-                return (
-                  <button
-                    key={opt.key}
-                    onClick={() => setSortBy(opt.key)}
-                    className="px-4 py-2 rounded-full font-medium text-sm flex items-center gap-2 transition-all"
-                    style={{
-                      background: isActive ? 'var(--accent)' : 'var(--bg-primary)',
-                      color: isActive ? 'var(--bg-primary)' : 'var(--text-sub)',
-                      border: `2px solid ${isActive ? 'var(--accent)' : 'var(--border-subtle)'}`,
-                      transform: isActive ? 'scale(1.02)' : 'scale(1)',
-                    }}
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span>{opt.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Category Filter Pills */}
-            <div className="flex flex-wrap gap-3">
-              {[
-                { key: 'ALL', label: 'All', icon: '⚡' },
-                { key: 'UNHEARD STORIES', label: 'Unheard Stories', icon: '🎙️' },
-                { key: 'MATCH ANALYSIS', label: 'Match Analysis', icon: '📊' },
-                { key: 'SPORTS AROUND THE GLOBE', label: 'Sports Around The Globe', icon: '🌍' }
-              ].map((filter) => {
-                const count = getCategoryCount(filter.key);
-                const isActive = activeFilter === filter.key;
-                
-                return (
-                  <button
-                    key={filter.key}
-                    onClick={() => setActiveFilter(filter.key)}
-                    className="px-4 py-2 rounded-full font-medium text-sm flex items-center gap-2 transition-all"
-                    style={{
-                      background: isActive ? 'var(--turf-green)' : 'var(--bg-primary)',
-                      color: isActive ? 'var(--bg-primary)' : 'var(--text-sub)',
-                      border: `2px solid ${isActive ? 'var(--turf-green)' : 'var(--border-subtle)'}`,
-                      transform: isActive ? 'scale(1.05)' : 'scale(1)'
-                    }}
-                  >
-                    <span>{filter.icon}</span>
-                    <span>{filter.label}</span>
-                    <span className="px-1.5 py-0.5 rounded-full text-xs font-bold"
-                      style={{
-                        background: isActive ? 'rgba(0,0,0,0.2)' : 'var(--border-subtle)',
-                        color: isActive ? 'var(--bg-primary)' : 'var(--text-main)'
-                      }}>
-                      {count}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
           </div>
-        </div>
-      </motion.section>
+        </motion.section>
 
-      {/* Video Grid */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        className="px-6 md:px-12 pb-16"
-      >
-        <div className="max-w-7xl mx-auto">
-          {filteredVideos.length === 0 ? (
-            <EmptyState
-              icon={Video}
-              title={videos.length === 0 ? 'No videos yet' : 'No results found'}
-              description={
-                videos.length === 0
-                  ? 'Upload your first video to get started and share it with the community.'
-                  : searchTerm
-                    ? `No videos match "${searchTerm}". Try different keywords or clear the search.`
-                    : 'No videos in this category. Try another filter or clear filters to see all.'
-              }
-              actionLabel={videos.length === 0 ? 'Upload your first video' : undefined}
-              actionHref={videos.length === 0 ? '/upload' : undefined}
-            />
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {filteredVideos.map((video, index) => (
-                <motion.div
-                  key={video._id || index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  whileHover={{
-                    scale: 1.03,
-                    y: -4,
-                    boxShadow: "0px 10px 40px rgba(0, 229, 255, 0.15)",
-                    transition: { duration: 0.25 }
-                  }}
-                  className="relative group cursor-pointer overflow-hidden rounded-xl"
-                  onClick={() => handleVideoClick(video)}
-                  style={{
-                    height: '320px',
-                    background: 'var(--bg-surface)',
-                    border: '1px solid var(--border-subtle)'
-                  }}
-                >
-                  {/* Thumbnail */}
-                  <div className="absolute inset-0">
-                    <VideoThumbnail video={video} />
-                  </div>
-
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-
-                  {/* Category Badge */}
-                  {video.category && (
-                    <div className="absolute top-3 left-3">
-                      <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
-                        style={{
-                          background: video.category === 'UNHEARD STORIES' ? 'var(--turf-green)' :
-                                     video.category === 'MATCH ANALYSIS' ? '#3b82f6' :
-                                     'var(--accent)',
-                          color: 'white'
-                        }}>
-                        {video.category === 'UNHEARD STORIES' ? '🎙️ Unheard Stories' :
-                         video.category === 'MATCH ANALYSIS' ? '📊 Match Analysis' :
-                         video.category === 'SPORTS AROUND THE GLOBE' ? '🌍 Sports Globe' :
-                         video.category}
-                      </span>
+        {/* Video Grid */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="px-6 md:px-12 pb-16"
+        >
+          <div className="max-w-7xl mx-auto">
+            {filteredVideos.length === 0 ? (
+              <EmptyState
+                icon={Video}
+                title={videos.length === 0 ? 'No videos yet' : 'No results found'}
+                description={
+                  videos.length === 0
+                    ? 'Upload your first video to get started and share it with the community.'
+                    : searchTerm
+                      ? `No videos match "${searchTerm}". Try different keywords or clear the search.`
+                      : 'No videos in this category. Try another filter or clear filters to see all.'
+                }
+                actionLabel={videos.length === 0 ? 'Upload your first video' : undefined}
+                actionHref={videos.length === 0 ? '/upload' : undefined}
+              />
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {filteredVideos.map((video, index) => (
+                  <motion.div
+                    key={video._id || index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    whileHover={{
+                      scale: 1.03,
+                      y: -4,
+                      boxShadow: "0px 10px 40px rgba(0, 229, 255, 0.15)",
+                      transition: { duration: 0.25 }
+                    }}
+                    className="relative group cursor-pointer overflow-hidden rounded-xl"
+                    onClick={() => handleVideoClick(video)}
+                    style={{
+                      height: '320px',
+                      background: 'var(--bg-surface)',
+                      border: '1px solid var(--border-subtle)'
+                    }}
+                  >
+                    {/* Thumbnail */}
+                    <div className="absolute inset-0">
+                      <VideoThumbnail video={video} />
                     </div>
-                  )}
 
-                  {/* Top right: Save + Copy link */}
-                  <div className="absolute top-3 right-3 z-10 flex gap-2">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (!isLoggedIn) {
-                          toast.error('Login to save videos');
-                          return;
-                        }
-                        toggleVideo(video._id || video.id);
-                      }}
-                      className="p-2 rounded-lg transition-opacity hover:opacity-100 opacity-90"
-                      style={{
-                        background: 'rgba(0,0,0,0.6)',
-                        color: isVideoSaved(video._id) ? 'var(--turf-green)' : 'white',
-                        border: '1px solid rgba(255,255,255,0.2)'
-                      }}
-                      title={isVideoSaved(video._id) ? 'Unsave' : 'Save for later'}
-                    >
-                      <Bookmark className={`w-4 h-4 ${isVideoSaved(video._id) ? 'fill-current' : ''}`} />
-                    </button>
-                    <button
-                      onClick={(e) => handleCopyLink(e, video)}
-                      className="p-2 rounded-lg transition-opacity hover:opacity-100 opacity-90"
-                      style={{
-                        background: 'rgba(0,0,0,0.6)',
-                        color: 'white',
-                        border: '1px solid rgba(255,255,255,0.2)'
-                      }}
-                      title="Copy link"
-                    >
-                      <Link2 className="w-4 h-4" />
-                    </button>
-                  </div>
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
 
-                  {/* Content */}
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <h3 className="font-bold text-white mb-2 line-clamp-2">
-                      {video.title}
-                    </h3>
-                    {video.description && (
-                      <p className="text-sm text-white/70 mb-2 line-clamp-1">
-                        {video.description}
-                      </p>
+                    {/* Category Badge */}
+                    {video.category && (
+                      <div className="absolute top-3 left-3">
+                        <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
+                          style={{
+                            background: video.category === 'UNHEARD STORIES' ? 'var(--turf-green)' :
+                              video.category === 'MATCH ANALYSIS' ? '#3b82f6' :
+                                'var(--accent)',
+                            color: 'white'
+                          }}>
+                          {video.category === 'UNHEARD STORIES' ? '🎙️ Unheard Stories' :
+                            video.category === 'MATCH ANALYSIS' ? '📊 Match Analysis' :
+                              video.category === 'SPORTS AROUND THE GLOBE' ? '🌍 Sports Globe' :
+                                video.category}
+                        </span>
+                      </div>
                     )}
-                    <div className="flex items-center gap-2 text-xs text-white/60 mb-3">
-                      <span
-                        className="flex items-center gap-1 cursor-pointer hover:text-white transition-colors"
+
+                    {/* Top right: Save + Copy link */}
+                    <div className="absolute top-3 right-3 z-10 flex gap-2">
+                      <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          const slug = video.postedBy?.username || video.uploadedBy?.username || video.postedBy?._id || video.postedBy;
-                          if (slug) navigate(`/user/${encodeURIComponent(slug)}`);
+                          if (!isLoggedIn) {
+                            toast.error('Login to save videos');
+                            return;
+                          }
+                          toggleVideo(video._id || video.id);
                         }}
+                        className="p-2 rounded-lg transition-opacity hover:opacity-100 opacity-90"
+                        style={{
+                          background: 'rgba(0,0,0,0.6)',
+                          color: isVideoSaved(video._id) ? 'var(--turf-green)' : 'white',
+                          border: '1px solid rgba(255,255,255,0.2)'
+                        }}
+                        title={isVideoSaved(video._id) ? 'Unsave' : 'Save for later'}
                       >
-                        <User className="w-3 h-3" />
-                        {video.postedBy?.username || video.uploadedBy?.username || 'Unknown'}
-                      </span>
-                      {video.createdAt && (
-                        <>
-                          <span>•</span>
-                          <span>{new Date(video.createdAt).toLocaleDateString('en-US', { 
-                            month: 'short', 
-                            day: 'numeric',
-                            year: 'numeric'
-                          })}</span>
-                        </>
-                      )}
-                      {video.views && (
-                        <>
-                          <span>•</span>
-                          <span>{video.views} views</span>
-                        </>
-                      )}
+                        <Bookmark className={`w-4 h-4 ${isVideoSaved(video._id) ? 'fill-current' : ''}`} />
+                      </button>
+                      <button
+                        onClick={(e) => handleCopyLink(e, video)}
+                        className="p-2 rounded-lg transition-opacity hover:opacity-100 opacity-90"
+                        style={{
+                          background: 'rgba(0,0,0,0.6)',
+                          color: 'white',
+                          border: '1px solid rgba(255,255,255,0.2)'
+                        }}
+                        title="Copy link"
+                      >
+                        <Link2 className="w-4 h-4" />
+                      </button>
                     </div>
-                  </div>
 
-                  {/* Play Button - Center */}
-                  <div className="absolute inset-0 flex items-center justify-center
+                    {/* Content */}
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <h3 className="font-bold text-white mb-2 line-clamp-2">
+                        {video.title}
+                      </h3>
+                      {video.description && (
+                        <p className="text-sm text-white/70 mb-2 line-clamp-1">
+                          {video.description}
+                        </p>
+                      )}
+                      <div className="flex items-center gap-2 text-xs text-white/60 mb-3">
+                        <span
+                          className="flex items-center gap-1 cursor-pointer hover:text-white transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const slug = video.postedBy?.username || video.uploadedBy?.username || video.postedBy?._id || video.postedBy;
+                            if (slug) navigate(`/user/${encodeURIComponent(slug)}`);
+                          }}
+                        >
+                          <User className="w-3 h-3" />
+                          {video.postedBy?.username || video.uploadedBy?.username || 'Unknown'}
+                        </span>
+                        {video.createdAt && (
+                          <>
+                            <span>•</span>
+                            <span>{new Date(video.createdAt).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}</span>
+                          </>
+                        )}
+                        {video.views && (
+                          <>
+                            <span>•</span>
+                            <span>{video.views} views</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Play Button - Center */}
+                    <div className="absolute inset-0 flex items-center justify-center
                     opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="w-16 h-16 rounded-full flex items-center justify-center"
-                      style={{
-                        background: 'var(--turf-green)',
-                        color: 'white'
-                      }}>
-                      <Play className="w-8 h-8 ml-1" fill="currentColor" />
+                      <div className="w-16 h-16 rounded-full flex items-center justify-center"
+                        style={{
+                          background: 'var(--turf-green)',
+                          color: 'white'
+                        }}>
+                        <Play className="w-8 h-8 ml-1" fill="currentColor" />
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </div>
-      </motion.div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
+        </motion.div>
 
-      {/* Video Player Modal */}
-      {selectedVideo && (
-        <VideoPlayer
-          video={selectedVideo}
-          onClose={handleClosePlayer}
-        />
-      )}
-    </div>
+        {/* Video Player Modal */}
+        {selectedVideo && (
+          <VideoPlayer
+            video={selectedVideo}
+            onClose={handleClosePlayer}
+          />
+        )}
+      </div>
     </PageWrapper>
   );
 };
